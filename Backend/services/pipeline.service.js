@@ -3,11 +3,16 @@ import performOCR from './ocr.service.js'
 import extractEntities from './nlp.service.js'
 import normalizetime from './normalize.service.js'
 
-
-const OCRpipeline = async (inputPath) => {
-    const preprocessedImagePath = await preprocessImage(inputPath)
-
-    const extractedData = await performOCR(preprocessedImagePath)
+const OCRpipeline = async (inputPath, text) => {
+    
+    let extractedData = {
+        raw_text: text,
+        confidence: 1.0
+    }
+    if (inputPath !== "") {
+        let preprocessedImagePath = await preprocessImage(inputPath)
+        extractedData = await performOCR(preprocessedImagePath)
+    }
     const extractedEntities = await extractEntities(extractedData)
     const normalizedDateTime = await normalizetime(extractedEntities)
 
